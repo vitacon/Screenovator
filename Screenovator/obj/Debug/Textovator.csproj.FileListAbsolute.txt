@@ -1,0 +1,10 @@
+D:\visual-work\Textovator\Textovator\bin\Debug\Textovator.exe.config
+D:\visual-work\Textovator\Textovator\bin\Debug\Textovator.exe
+D:\visual-work\Textovator\Textovator\bin\Debug\Textovator.pdb
+D:\visual-work\Textovator\Textovator\obj\Debug\Textovator.Form1.resources
+D:\visual-work\Textovator\Textovator\obj\Debug\Textovator.Properties.Resources.resources
+D:\visual-work\Textovator\Textovator\obj\Debug\Textovator.csproj.GenerateResource.cache
+D:\visual-work\Textovator\Textovator\obj\Debug\Textovator.csproj.CoreCompileInputs.cache
+D:\visual-work\Textovator\Textovator\obj\Debug\Textovator.exe
+D:\visual-work\Textovator\Textovator\obj\Debug\Textovator.pdb
+d:\visual-work\Textovator\Textovator\obj\Debug\Textovator.csprojAssemblyReference.cache

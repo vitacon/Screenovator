@@ -1,0 +1,94 @@
+Screenovator
+
+simple screenwriting editor
+using .NET framework 4.8
+
+Vít Èondák 2021
+eriador.condak.cz
+
+TODO
+* delete a scene
+* fix highlighting
+* generic load/save
+* breaking scene into two (right click menu)
+* some kind of intellisense
+* enabling spellchecker?
+* card size coef
+
+History
+
+0.27	2021-03-26
+	* drag&drop ordering of scenes works even through their child objects
+	+ names of characters are forced to upper case as you type
+
+0.26	2021-03-25
+	+ scene cards can change their size and layout
+
+0.25	2021-03-25
+	* rewritten reordering of scenes
+
+0.24	2021-03-24
+	* slightly extended title screen of preview
+	* fixed the number of scenes of preview
+
+0.23	2021-03-24
+	+ scenes can be added
+	* load works with more than three scenes
+
+0.22	2021-03-23
+	* export is a bit more formatted
+	* name of the project is included in screenplay object
+	* export can be saved and printed (no settings)
+
+0.21	2021-03-22
+	* merged 0.19 and 0.20.1
+
+0.20.1	2021-03-22 (alternative branch)
+	* massive changes in layout
+	+ Preview prototype
+
+0.19	2021-03-21
+	* scenelist and panellist turned to Lists
+	* experimental export as text
+
+0.18	2021-03-20
+	* wordwrap somewhat works
+	* changed layout of the right panel (+ characters)
+	+ indentation updates while typing
+
+0.17	2021-03-19
+	* load and save changed to separate methods
+	* load is performed right after start
+	* reordering of scenes updates number in right panel
+	* color of scene is propagated to the left panel
+
+0.16	2021-03-19
+	+ temporary load and save to XML
+
+0.15	2021-03-18
+	* fixed ranges of scene ids and order
+	* yet another version of icon =)
+
+0.14	2021-03-18
+	+ changing order of scenes
+	+ switching scenes
+	* new icon
+
+0.13	2021-03-17
+	* temporary switching of scenes
+
+0.11	2021-03-16
+	+ rough formating of a given line
+
+0.10	2021-03-16
+	* renamed to Screenovator
+
+0.02	2021-03-15
+	+ basic highlighting
+	* RichTextBox
+	* dummy menu
+
+0.01	2021-03-12
+	+ first rough prototype using TextBox
+
+(eof)

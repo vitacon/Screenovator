@@ -1,0 +1,185 @@
+10:04 17.03.2021
+
+http://dominicweb.eu/en/blog/programming/winforms-richtextbox-with-paragraph-spacing-csharp/
+
+WinForms RichTextBox with paragraph spacing in C#
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace Exerc
+{
+    class RichTextBoxWithParagraphSpacing : RichTextBox
+    {
+        private const int PFM_SPACEBEFORE = 64;
+        private const int PFM_SPACEAFTER = 128;
+        private const int EM_SETPARAFORMAT = 1095;
+        private const int SCF_SELECTION = 1;
+
+        public int SelectionParagraphSpacingAfter
+        {
+            set
+            {
+                PARAFORMAT fmt = new PARAFORMAT();
+                fmt.cbSize = Marshal.SizeOf(fmt);
+                fmt.dwMask = PFM_SPACEAFTER;
+                fmt.dySpaceAfter = value;
+                SendMessage(new HandleRef(this, this.Handle),
+                             EM_SETPARAFORMAT,
+                             SCF_SELECTION,
+                             ref fmt
+                           );
+            }
+        }
+
+        public int SelectionParagraphSpacingBefore
+        {
+            set
+            {
+                PARAFORMAT fmt = new PARAFORMAT();
+                fmt.cbSize = Marshal.SizeOf(fmt);
+                fmt.dwMask = PFM_SPACEBEFORE;
+                fmt.dySpaceBefore = value;
+                SendMessage(new HandleRef(this, this.Handle),
+                             EM_SETPARAFORMAT,
+                             SCF_SELECTION,
+                             ref fmt
+                           );
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct PARAFORMAT
+        {
+            public int cbSize;
+            public uint dwMask;
+            public short wNumbering;
+            public short wReserved;
+            public int dxStartIndent;
+            public int dxRightIndent;
+            public int dxOffset;
+            public short wAlignment;
+            public short cTabCount;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public int[] rgxTabs;
+
+            // PARAFORMAT2 from here onwards.
+            public int dySpaceBefore;
+            public int dySpaceAfter;
+            public int dyLineSpacing;
+            public short sStyle;
+            public byte bLineSpacingRule;
+            public byte bOutlineLevel;
+            public short wShadingWeight;
+            public short wShadingStyle;
+            public short wNumberingStart;
+            public short wNumberingStyle;
+            public short wNumberingTab;
+            public short wBorderSpace;
+            public short wBorderWidth;
+            public short wBorders;
+        }
+
+        [DllImport("user32", CharSet = CharSet.Auto)]
+        private static extern int SendMessage(HandleRef hWnd,
+                                               int msg,
+                                               int wParam,
+                                               ref PARAFORMAT lp);
+    }
+
+}
+
+----
+
+
+Instead of \t, try using the SelectionIndent property. It uses a value in pixels:
+
+rtb.AppendText("A" + Environment.NewLine);
+rtb.SelectionIndent = 36;
+rtb.AppendText(new string('B', 250));
+rtb.AppendText(Environment.NewLine);
+rtb.SelectionIndent = 0;
+rtb.AppendText("C");
+
+---
+https://docs.microsoft.com/cs-cz/dotnet/desktop/wpf/controls/richtextbox-overview?view=netframeworkdesktop-4.8
+
+
+---
+https://www.c-sharpcorner.com/UploadFile/mahesh/wpf-richtextbox/
+
+---
+DRAG AND DROP
+
+public partial class TestForm: Form
+{
+   public TestForm()
+    {
+        InitializeComponent();
+        this.flowLayoutPanel1.AllowDrop = true
+    }
+
+    private void AddImageToBlog(System.Drawing.Image image)
+    {
+        PictureBox pbox = new PictureBox();
+        pbox.SizeMode = PictureBoxSizeMode.Zoom;            
+        pbox.Height = (_picturebox_height * _ScaleFactor);
+        pbox.Width = (_picturebox_width * _ScaleFactor);
+        pbox.Visible = true;
+        pbox.Image = image;
+
+        pbox.MouseDown += new MouseEventHandler(pbox_MouseDown);
+        pbox.DragOver += new DragEventHandler(pbox_DragOver);            
+        pbox.AllowDrop = true;
+        flpNewBlog.Controls.Add(pbox);
+    }
+
+    void pbox_DragOver(object sender, DragEventArgs e)
+    {
+        base.OnDragOver(e);
+        // is another dragable
+        if (e.Data.GetData(typeof(PictureBox)) != null)
+        {
+            FlowLayoutPanel p = (FlowLayoutPanel)(sender as PictureBox).Parent;                 
+            //Current Position             
+            int myIndex = p.Controls.GetChildIndex((sender as PictureBox));
+
+            //Dragged to control to location of next picturebox
+            PictureBox q = (PictureBox) e.Data.GetData(typeof(PictureBox));                
+            p.Controls.SetChildIndex(q, myIndex);
+        }           
+    }
+
+    void pbox_MouseDown(object sender, MouseEventArgs e)
+    {
+        base.OnMouseDown(e);
+        DoDragDrop(sender, DragDropEffects.All);
+    }
+}
+
+---
+16:05 24.03.2021
+
+SpellCheck Tøída
+Definice
+
+Obor názvù:
+    System.Windows.Controls 
+
+Sestavení:
+    PresentationFramework.dll
+
+Poskytuje funkce kontroly pravopisu v reálném èase pro ovládací prvky pro úpravu textu, jako jsou TextBox a RichTextBox .
+
+V .NET Framework 4 nabízí WPF slovníky pro angliètinu, francouzštinu, nìmèinu a španìlštinu.
+
+---
+10:42 26.03.2021
+GitHub
+
+https://docs.microsoft.com/en-us/visualstudio/ide/git-with-visual-studio?view=vs-2019

@@ -1,0 +1,346 @@
+14:47 26.03.2021
+https://stackoverflow.com/questions/40016018/c-sharp-make-an-autocomplete-to-a-richtextbox
+
+ON LOAD
+
+intellisenseRichTextBox.IntellisenseWords = new string[] { "Test", "Foo", "Bar", "Supercalifragilisticexpialidocious" };
+intellisenseRichTextBox.YOffset = 132;
+intellisenseRichTextBox.XOffset = 70;
+
+...
+
+public class NotificationForm : Form
+{
+    public NotificationForm()
+    {
+        this.ShowInTaskbar = false;
+        //this.Enabled = true;
+        this.FormBorderStyle = FormBorderStyle.None;
+    }
+    protected override bool ShowWithoutActivation
+    {
+        get
+        {
+            return true;
+        }
+    }
+    protected override CreateParams CreateParams
+    {
+        get
+        {
+            CreateParams baseParams = base.CreateParams;
+
+            const int WS_EX_NOACTIVATE = 0x08000000;
+            const int WS_EX_TOOLWINDOW = 0x00000080;
+            baseParams.ExStyle |= (int)(WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
+
+            return baseParams;
+        }
+    }
+
+}
+
+public class RichTextBoxIntellisense : RichTextBox
+{
+    private NotificationForm intelliAutoCompleteForm;
+    private ListBox intelliAutoCompleteListBox;
+    private bool IsNotificationFormShowing;
+    private bool IsFromReplaceTab;
+    private bool IsFromMouseClick;
+    private int _suggestionCount = 20;
+
+    public string[] IntellisenseWords { get; set; }
+    public int YOffset { get; set; }
+    public int XOffset { get; set; }
+
+    public int SuggestionCount
+    {
+        get
+        {
+            return _suggestionCount;
+        }
+        set
+        {
+            _suggestionCount = value;
+        }
+    }
+
+    public RichTextBoxIntellisense()
+    {
+        this.AcceptsTab = true;
+        this.YOffset = 30;
+
+        intelliAutoCompleteForm = new NotificationForm();
+        intelliAutoCompleteForm.Size = new Size(200, 200);
+        intelliAutoCompleteForm.TopMost = true;
+        intelliAutoCompleteListBox = new ListBox();
+        intelliAutoCompleteListBox.Dock = DockStyle.Fill;
+        intelliAutoCompleteForm.Controls.Add(intelliAutoCompleteListBox);
+
+        this.TextChanged += RichTextBoxIntellisense_TextChanged;
+        this.KeyDown += RichTextBoxIntellisense_KeyDown;
+        this.KeyPress += RichTextBoxIntellisense_KeyPress;
+        this.SelectionChanged += RichTextBoxIntellisense_SelectionChanged;
+
+        intelliAutoCompleteListBox.Click += IntelliAutoCompleteListBox_Click;
+        intelliAutoCompleteListBox.SelectedIndexChanged += IntelliAutoCompleteListBox_SelectedIndexChanged;
+
+        intelliAutoCompleteForm.Show();
+        intelliAutoCompleteForm.Hide();
+    }
+
+    private void IntelliAutoCompleteListBox_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if(IsFromMouseClick)
+        {
+            if (intelliAutoCompleteListBox.SelectedIndex >= 0)
+            {
+                ReplaceCurrentWordWith(intelliAutoCompleteListBox.SelectedItem.ToString());
+                IsFromReplaceTab = false;
+            }
+        }
+        IsFromMouseClick = false;
+    }
+
+    private void IntelliAutoCompleteListBox_Click(object sender, EventArgs e)
+    {
+        IsFromMouseClick = true;
+    }
+
+    private void RichTextBoxIntellisense_SelectionChanged(object sender, EventArgs e)
+    {
+        intelliAutoCompleteForm.Hide();
+        IsNotificationFormShowing = false;
+    }
+
+    private void RichTextBoxIntellisense_KeyPress(object sender, KeyPressEventArgs e)
+    {
+        if (IsFromReplaceTab)
+        {
+            e.Handled = true;
+            IsFromReplaceTab = false;
+        }
+        else
+        {
+            if(e.KeyChar == (char)Keys.Escape)
+            {
+                intelliAutoCompleteForm.Hide();
+                IsNotificationFormShowing = false;
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void RichTextBoxIntellisense_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (IsNotificationFormShowing)
+        {
+            if (e.KeyCode == Keys.Up)
+            {
+                if(intelliAutoCompleteListBox.Items.Count > 0)
+                {
+                    if(intelliAutoCompleteListBox.SelectedIndex < 0)
+                    {
+                        intelliAutoCompleteListBox.SelectedIndex = 0;
+                    }
+                    else if(intelliAutoCompleteListBox.SelectedIndex > 0)
+                    {
+                        intelliAutoCompleteListBox.SelectedIndex = intelliAutoCompleteListBox.SelectedIndex - 1;
+                    }
+                }
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Down)
+            {
+                if (intelliAutoCompleteListBox.Items.Count > 0)
+                {
+                    if (intelliAutoCompleteListBox.SelectedIndex < 0)
+                    {
+                        intelliAutoCompleteListBox.SelectedIndex = 0;
+                    }
+                    else if (intelliAutoCompleteListBox.SelectedIndex < intelliAutoCompleteListBox.Items.Count - 1)
+                    {
+                        intelliAutoCompleteListBox.SelectedIndex = intelliAutoCompleteListBox.SelectedIndex + 1;
+                    }
+                }
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                if(intelliAutoCompleteListBox.SelectedIndex >= 0)
+                {
+                    ReplaceCurrentWordWith(intelliAutoCompleteListBox.SelectedItem.ToString());
+                }
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.Tab)
+            {
+                if (intelliAutoCompleteListBox.SelectedIndex >= 0)
+                {
+                    ReplaceCurrentWordWith(intelliAutoCompleteListBox.SelectedItem.ToString());
+                }
+                e.Handled = true;
+            }
+        }
+    }
+
+    private void RichTextBoxIntellisense_TextChanged(object sender, EventArgs e)
+    {
+        if (IntellisenseWords != null && IntellisenseWords.Length > 0)
+        {
+            string wordText;
+            int lastIndexOfSpace;
+            int lastIndexOfNewline;
+            int lastIndexOfTab;
+            int lastIndexOf;
+            if(this.SelectionStart == this.Text.Length)
+            {
+                if(this.SelectionStart > 0 && this.Text[this.SelectionStart - 1] != ' ' && this.Text[this.SelectionStart - 1] != '\t' && this.Text[this.SelectionStart - 1] != '\n')
+                {
+                    wordText = this.Text.Substring(0,this.SelectionStart);
+                    lastIndexOfSpace = wordText.LastIndexOf(' ');
+                    lastIndexOfNewline = wordText.LastIndexOf('\n');
+                    lastIndexOfTab = wordText.LastIndexOf('\t');
+                    lastIndexOf = Math.Max(Math.Max(lastIndexOfSpace,lastIndexOfNewline),lastIndexOfTab);
+                    if (lastIndexOf >= 0)
+                    {
+                        wordText = wordText.Substring(lastIndexOf + 1);
+                    }
+                    if (PopulateIntelliListBox(wordText))
+                    {
+                        ShowAutoCompleteForm();
+                    }
+                    else
+                    {
+                        intelliAutoCompleteForm.Hide();
+                        IsNotificationFormShowing = false;
+                    }
+                }
+                else
+                {
+                    intelliAutoCompleteForm.Hide();
+                    IsNotificationFormShowing = false;
+                }
+            }
+            else
+            {
+                char currentChar = this.Text[this.SelectionStart];
+                if(this.SelectionStart > 0)
+                {
+                    if(this.SelectionStart > 0 && this.Text[this.SelectionStart - 1] != ' ' && this.Text[this.SelectionStart - 1] != '\t' && this.Text[this.SelectionStart - 1] != '\n'
+                        && (this.Text[this.SelectionStart] == ' ' || this.Text[this.SelectionStart] == '\t' || this.Text[this.SelectionStart] == '\n'))
+                    {
+                        wordText = this.Text.Substring(0, this.SelectionStart);
+                        lastIndexOfSpace = wordText.LastIndexOf(' ');
+                        lastIndexOfNewline = wordText.LastIndexOf('\n');
+                        lastIndexOfTab = wordText.LastIndexOf('\t');
+                        lastIndexOf = Math.Max(Math.Max(lastIndexOfSpace, lastIndexOfNewline), lastIndexOfTab);
+                        if (lastIndexOf >= 0)
+                        {
+                            wordText = wordText.Substring(lastIndexOf + 1);
+                        }
+                        if(PopulateIntelliListBox(wordText))
+                        {
+                            ShowAutoCompleteForm();
+                        }
+                        else
+                        {
+                            intelliAutoCompleteForm.Hide();
+                            IsNotificationFormShowing = false;
+                        }
+                    }
+                    else
+                    {
+                        intelliAutoCompleteForm.Hide();
+                        IsNotificationFormShowing = false;
+                    }
+                }
+                else
+                {
+                    intelliAutoCompleteForm.Hide();
+                    IsNotificationFormShowing = false;
+                }
+            }
+        }
+        else
+        {
+            intelliAutoCompleteForm.Hide();
+            IsNotificationFormShowing = false;
+        }
+    }
+
+    private bool PopulateIntelliListBox(string wordTyping)
+    {
+        intelliAutoCompleteListBox.Items.Clear();
+
+        List<KeyValuePair<int, string>> tempWords = new List<KeyValuePair<int, string>>();
+        string[] outArray;
+
+        for(int i = 0; i < IntellisenseWords.Length; i++)
+        {
+            if(IntellisenseWords[i].StartsWith(wordTyping, StringComparison.CurrentCultureIgnoreCase))
+            {
+                tempWords.Add(new KeyValuePair<int, string>(1, IntellisenseWords[i]));
+            }
+        }
+
+        if(tempWords.Count < _suggestionCount && wordTyping.Length > 1)
+        {
+            for (int i = 0; i < IntellisenseWords.Length; i++)
+            {
+                if (IntellisenseWords[i].Contains(wordTyping, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if(tempWords.Count(c => c.Value == IntellisenseWords[i]) == 0)
+                    {
+                        tempWords.Add(new KeyValuePair<int, string>(2, IntellisenseWords[i]));
+                    }
+                }
+            }
+        }
+
+        outArray = tempWords.OrderBy(o => o.Key).Take(_suggestionCount).Select(s => s.Value).ToArray();
+
+        intelliAutoCompleteListBox.Items.AddRange(outArray);
+
+        return outArray.Length > 0;
+    }
+
+    private void ShowAutoCompleteForm()
+    {
+        Point tmpPoint = this.PointToClient(this.Location);
+        Point tmpSelPoint = this.GetPositionFromCharIndex(this.SelectionStart);
+        intelliAutoCompleteForm.Location = new Point((-1 * tmpPoint.X) + tmpSelPoint.X + this.XOffset, (-1 * tmpPoint.Y) + tmpSelPoint.Y + this.Margin.Top + this.YOffset);
+        intelliAutoCompleteForm.Show();
+        IsNotificationFormShowing = true;
+        this.Focus();
+    }
+
+    private void ReplaceCurrentWordWith(string Word)
+    {
+        string startString = "";
+        string endString = this.Text.Substring(this.SelectionStart);
+        string wordText = this.Text.Substring(0, this.SelectionStart);
+        int lastIndexOfSpace = wordText.LastIndexOf(' ');
+        int lastIndexOfNewline = wordText.LastIndexOf('\n');
+        int lastIndexOfTab = wordText.LastIndexOf('\t');
+        int lastIndexOf = Math.Max(Math.Max(lastIndexOfSpace, lastIndexOfNewline), lastIndexOfTab);
+        if (lastIndexOf >= 0)
+        {
+            startString = wordText.Substring(0, lastIndexOf + 1);
+            wordText = wordText.Substring(lastIndexOf + 1);
+        }
+
+        this.Text = String.Format("{0}{1} {2}", startString, Word, endString);
+
+        if(lastIndexOf >= 0)
+        {
+            this.SelectionStart = startString.Length + Word.Length + 1;
+        }
+        else
+        {
+            this.SelectionStart = Word.Length + 1;
+        }
+
+        IsFromReplaceTab = true;
+    }
+}

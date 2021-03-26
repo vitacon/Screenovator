@@ -1,0 +1,61 @@
+9:45 23.2.2021 V.
+14:20 05.03.2021 V.
+
+Celtx dost zjednodušuje formátování textu, ale k mému ideálu má docela daleko.
+
+Já bych si pøedstavoval, že v levém sloupci bude vidìt schématické zobrazení celého scénáøe neboli "kartièky".
+
+Nejprve moje orientaèní jméno scény (o co jde).
+Teprve pak jméno její lokace a èasové zaøazení.
+  Celtx umožòuje místo klasické hlavièky scény zobrazovat její nazev, ale pro jistotu ho tam neumožòuje pøejmenovat.
+  To je možné jen v režimu kartièek a dost mi to leze na nervy.
+Pod tím automaticky aktualizovaný seznam postav (barvy podle osob), které se ve scénì vyskytují a mluví.
+
+  Jméno postavy a její barva by se mìla dá pøímo v textu zmìnit a tím by se zmìnily i všechny její výskyty.
+
+A pøedevším by mìla velikost kartièky odpovídat délce scény (to by možná mohlo být volitelné),
+aby bylo možné už pøi pohledu na to schéma zhodnotit, jak je která èást dlouhá.
+(mìl by se tam zobrazovat tøeba poèet øádkù nebo stránek)
+
+Sekce by možná mohly být hierarchické, tak jak jsem pùvodnì psal Magii v Google Doc.
+
+Úvod na hradì
+  Princezna u zrcadla
+  ...
+
+Cesta tam a zase zpátky
+  Hospoda
+  Setkání s vodníkem
+  ...
+
+Finále
+  Souboj s kouzelníkem
+  Konfrontace s princem
+  Svatba
+
+
+Editor by samozøejmì mìl nabízet jména postav podobnì jako Celtx, pøi dialogu by se automaticky mìlo nabízet jméno pøedposlední postavy.
+Seznam postav by se ale mìl dynamicky mìnit, aby v nìm nezùstávaly nesmysly vygenerované bìhem editace.
+(Pokud kus textu Tabem omylem zmìním na jméno postavy, tak Celtx si ho zaøadí do seznamu a už ho tam nechá.)
+
+---
+WriterSolo má nastavení barev pro rùzné postavy nebo èásti textù, ale týká se to jen samotného jména postavy, ne jejích replik.
+
+Jinak WriterSolo neumožòuje vytváøet struèné hlavièky scén. Zobrazuje jen jejich suchou hlavièku (int/etx - místo (èas)).
+
+---
+
+Rozložení podle Adaptace:
+
+okraj
+èíslo scény
+5	heading (INT/EXT - LOCATION - DAY)
+	
+	Action (cca 62 max)
+	20		CHARACTER
+	15	    (vsuvka)
+	10	Dialog. (max 42)
+
+---
+Výbìr textu:
+Celtx pøi oznaèení bloku s monologem oznaèuje skuteènì pouze písmena. Levy okraj v selekci není - prostì je to margin.
