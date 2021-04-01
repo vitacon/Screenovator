@@ -4,18 +4,58 @@ simple screenwriting editor
 using .NET framework 4.8
 
 Vít Èondák 2021
-eriador.condak.cz
+http://eriador.condak.cz
+https://github.com/vitacon/Screenovator
 
 TODO
-* delete a scene
+
+* import .txt
+* import .celtx
 * fix highlighting
-* generic load/save
+* list of characters
 * breaking scene into two (right click menu)
 * some kind of intellisense
+
+* print to pdf (printer dialog)
 * enabling spellchecker?
-* card size coef
+
 
 History
+
+0.35	2021-03-31
+	* fixed messed up width of scene panels
+	* comboBox_panelheight: Minimal, Relative, Highly relative
+	* flow panel parameters are save to config too
+	* arrows and Page Up/Down can scroll to neighboring  scenes
+	* fixed wrong names of manually reordered panels
+
+0.34	2021-03-31
+	* saveFileDialog
+	* renamed some source files
+	* warnings about unsaved changes
+
+0.33	2021-03-30
+	+ Czech localization of main form
+	* semi-transparent background of scene number
+
+0.32	2021-03-30
+	+ "Load" and "Save as" use dialog
+	+ "About" dialog
+	+ nine custom colors in Color dialog
+
+0.31	2021-03-30
+	* the app "remembers" the position and size of the main windows
+	* the splitter position is correctly renewed most of the time =}
+
+0.30	2021-03-29
+	+ basic config.xml file (reopen file, window state)
+
+0.29	2021-03-29
+	* main menu items work (New, Load, Save, Exit)
+
+0.28	2021-03-29
+	+ the selected scene can be deleted (the rest is renumbered)
+	+ name of the open file is displayed in main form caption
 
 0.27	2021-03-26
 	* drag&drop ordering of scenes works even through their child objects

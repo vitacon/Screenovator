@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Screenplay xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <docname>Pokusná výprava</docname>
+  <filename>pokus</filename>
+  <SceneList>
+    <Scene>
+      <order>1</order>
+      <name>Výjezd z domova</name>
+      <heading>EXT. LOUKA - DEN</heading>
+      <length>126</length>
+      <rtf>{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Courier New;}{\f1\fnil\fcharset0 Courier New;}}
+{\colortbl ;\red255\green0\blue0;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\li75\ri75\f0\fs24 Fakt nev\f1\lang1033\'ed\f0\lang1029 m. Prost\'ec n\'eckde.\par
+
+\pard\li1575\ri1500\par
+
+\pard\li3075\ri1500\cf1 KAREL\par
+
+\pard\li1575\ri1500 U\'9e zase!\cf0\par
+
+\pard\li3075\ri1500\par
+\cf2 PAVEL\par
+
+\pard\li1575\ri1500 Tak nev\f1\lang1033\'ed\f0\lang1029 m.\cf0\par
+
+\pard\li1500\ri1500\par
+
+\pard\li3075\ri1500\cf1\f1\lang1033 KAREL\par
+
+\pard\li1575\ri1500 Nev\'ed\f0\lang1029 m, co od toho m\f1\lang1033\'e1\f0\lang1029 m \'e8ekat.\par
+\par
+
+\pard\li3075\ri1500\cf2\f1\lang1033 PAVEL\par
+
+\pard\li1575\ri1500 Modr\'e1\f0\lang1029 !\cf0\par
+\par
+
+\pard\li3075\ri1500\cf1 KAREL\par
+
+\pard\li1575\ri1500\'c8erven\f1\lang1033\'e1\f0\lang1029 !\cf0\par
+
+\pard\li3075\ri1500\par
+}
+</rtf>
+      <Color>-256</Color>
+    </Scene>
+    <Scene>
+      <order>2</order>
+      <name>Závěr</name>
+      <heading>EXT. NA LOUCE - DEN</heading>
+      <length>48</length>
+      <rtf>{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Courier New;}{\f1\fnil\fcharset0 Courier New;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\f0\fs24 V\'9aechno dob\'f8e kon\'e8\f1\lang1033\'ed\f0\lang1029 . Zazvonil zvonec a tak d\f1\lang1033\'e1\f0\lang1029 le.\par
+}
+</rtf>
+      <Color>-8323200</Color>
+    </Scene>
+    <Scene>
+      <order>3</order>
+      <name>Setkání v lese</name>
+      <heading>EXP. LES - DEN</heading>
+      <length>354</length>
+      <rtf>{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Courier New;}{\f1\fnil\fcharset0 Courier New;}}
+{\colortbl ;\red255\green0\blue0;\red0\green0\blue255;\red0\green0\blue139;\red139\green0\blue0;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\li75\ri75\f0\fs24 Karel vyj\f1\lang1033\'ed\f0\'9ed\f1\'ed z domu. Je lehce oble\f0\'e8en\f1\'fd a t\f0\'f8ese se zimou. Opod\f1\'e1l stoj\'ed Josef a d\'edv\'e1 se na oblohu.\par
+
+\pard\li3075\ri1500\cf1\par
+KAREL\par
+
+\pard\li1575\ri1500 (zoufale)\par
+Co te\f0\'ef budu d\'eclat ?\cf0\par
+
+\pard\par
+
+\pard\li3075\ri1500\cf2 JOSEF\par
+
+\pard\li1575\ri1500 To je mi naprosto fuk. J\f1\'e1 m\'e1m dnes dost\cf3  sv\'e9 pr\'e1ce.\cf0\par
+
+\pard\par
+
+\pard\li3075\ri1500\cf2 PAVEL\cf4\par
+
+\pard\li1575\ri1500\f0\lang1029 M\'f9\'9eu \f1\lang1033 aspo\f0\lang1029\'f2\f1\lang1033  trochu pomoct\cf0\f0\lang1029 ?\par
+
+\pard\li1500\ri1500\par
+
+\pard\li3075\ri1500\cf2\f1\lang1033 KAREL\par
+
+\pard\li2325\ri1500 (zoufale)\cf4\par
+
+\pard\li1575\ri1500 Co te\f0\'ef budu d\'eclat ?\cf0\par
+
+\pard\par
+
+\pard\li3075\ri1500\cf2 JOSEF\cf3\par
+
+\pard\li1575\ri1500 To je mi naprosto fuk. J\f1\'e1 m\'e1m dnes dost sv\'e9 pr\'e1ce.\cf0\par
+
+\pard\li3075\ri1500\par
+\cf4 PAVEL\par
+
+\pard\li1575\ri1500\f0\lang1029 M\'f9\'9eu \f1\lang1033 aspo\f0\lang1029\'f2\f1\lang1033  trochu pomoct\cf0\f0\lang1029 ?\par
+
+\pard\li1500\ri1500\par
+}
+</rtf>
+      <Color>-2031664</Color>
+    </Scene>
+    <Scene>
+      <order>4</order>
+      <name>Opuštění domova na začátku</name>
+      <heading>EXT. PŘED DOMEM - DEN</heading>
+      <length>506</length>
+      <rtf>{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Courier New;}{\f1\fnil\fcharset0 Courier New;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\li75\ri75\f0\fs24 12345678901234567890123456789012345678901234567890123456789012\par
+Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. \par
+
+\pard\li1575\ri1500\par
+
+\pard\li3075\ri1500\cf1 KAREL\par
+
+\pard\li2325\ri1500\f1\lang1033 (ti\f0\lang1029\'9ae)\par
+
+\pard\li1575\ri1500 Tak co?\cf0\par
+\par
+
+\pard\li3075\ri1500\cf1 JOSEF\cf0\par
+
+\pard\li2325\ri1500 (pokus)\par
+
+\pard\li1575\ri1500 Nev\f1\lang1033\'ed\f0\lang1029 m.\par
+\par
+
+\pard\li3075\ri1500\cf1 KAREL\cf0\par
+
+\pard\li1575\ri1500 Je\'9at\'ec si to rozmysl\f1\lang1033\'ed\f0\lang1029 m.\par
+\par
+
+\pard\li3075\ri1500 JOSEF\par
+
+\pard\li1575\ri1500 ?\par
+\par
+
+\pard\li3075\ri1500 KAREL\par
+
+\pard\li1575\ri1500\par
+}
+</rtf>
+      <Color>-3872</Color>
+    </Scene>
+    <Scene>
+      <order>5</order>
+      <name>Nová scéna</name>
+      <heading>INT. LOCATION - DAYTIME</heading>
+      <length>1472</length>
+      <rtf>{\rtf1\ansi\ansicpg1250\deff0\nouicompat\deflang1029{\fonttbl{\f0\fnil\fcharset238 Courier New;}{\f1\fnil\fcharset0 Courier New;}}
+{\colortbl ;\red0\green0\blue139;\red139\green0\blue0;}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\li75\ri75\f0\fs24 12345678901234567890123456789012345678901234567890123456789012\par
+Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. \par
+
+\pard\li1575\ri1500\par
+
+\pard\li3075\ri1500\cf1 KAREL\cf0\par
+
+\pard\li2325\ri1500\f1\lang1033 (ti\f0\lang1029\'9ae)\par
+
+\pard\li1575\ri1500 Tak co?\par
+\par
+
+\pard\li3075\ri1500 JOSEF\par
+
+\pard\li2325\ri1500 (pokus)\par
+
+\pard\li1575\ri1500 Nev\f1\lang1033\'ed\f0\lang1029 m.\par
+\par
+
+\pard\li3075\ri1500\cf2 KAREL\par
+
+\pard\li1575\ri1500 Je\'9at\'ec si to rozmysl\f1\lang1033\'ed\f0\lang1029 m.\par
+\cf0\par
+
+\pard\li75\ri75 12345678901234567890123456789012345678901234567890123456789012\par
+Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. \par
+
+\pard\li1575\ri1500\par
+
+\pard\li3075\ri1500\cf1 KAREL\cf0\par
+
+\pard\li2325\ri1500\f1\lang1033 (ti\f0\lang1029\'9ae)\par
+
+\pard\li1575\ri1500 Tak co?\par
+\par
+
+\pard\li3075\ri1500\cf1 JOSEF\cf0\par
+
+\pard\li2325\ri1500 (pokus)\par
+
+\pard\li1575\ri1500 Nev\f1\lang1033\'ed\f0\lang1029 m.\par
+\par
+
+\pard\li3075\ri1500\cf1 KAREL\cf0\par
+
+\pard\li1575\ri1500 Je\'9at\'ec si to rozmysl\f1\lang1033\'ed\f0\lang1029 m.\par
+\par
+
+\pard\li75\ri75 12345678901234567890123456789012345678901234567890123456789012\par
+Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. Dneska je kr\f1\lang1033\'e1\f0\lang1029 sn\f1\lang1033\'fd\f0\lang1029  den. \par
+
+\pard\li1575\ri1500\par
+
+\pard\li3075\ri1500 KAREL\par
+
+\pard\li2325\ri1500\f1\lang1033 (ti\f0\lang1029\'9ae)\par
+
+\pard\li1575\ri1500 Tak co?\par
+\par
+
+\pard\li3075\ri1500 JOSEF\par
+
+\pard\li2325\ri1500 (pokus)\par
+
+\pard\li1575\ri1500 Nev\f1\lang1033\'ed\f0\lang1029 m.\par
+\par
+
+\pard\li3075\ri1500 KAREL\par
+
+\pard\li1575\ri1500 Je\'9at\'ec si to rozmysl\f1\lang1033\'ed\f0\lang1029 m.\par
+
+\pard\par
+}
+</rtf>
+      <Color>-486701</Color>
+    </Scene>
+  </SceneList>
+</Screenplay>

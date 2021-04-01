@@ -18,3 +18,13 @@ d:\visual-work\Screen\screenovator\Screenovator\obj\Debug\Screenovator.exe
 d:\visual-work\Screen\screenovator\Screenovator\obj\Debug\Screenovator.pdb
 d:\visual-work\Screen\screenovator\Screenovator\obj\Debug\Screenovator.Form1.resources
 d:\visual-work\Screen\screenovator\Screenovator\obj\Debug\Screenovator.csprojAssemblyReference.cache
+d:\work\vitacon\Screenovator\Screenovator\bin\Debug\Screenovator.exe.config
+d:\work\vitacon\Screenovator\Screenovator\bin\Debug\Screenovator.exe
+d:\work\vitacon\Screenovator\Screenovator\bin\Debug\Screenovator.pdb
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.csprojAssemblyReference.cache
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.Form1.resources
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.Properties.Resources.resources
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.csproj.GenerateResource.cache
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.csproj.CoreCompileInputs.cache
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.exe
+d:\work\vitacon\Screenovator\Screenovator\obj\Debug\Screenovator.pdb

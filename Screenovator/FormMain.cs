@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 //using System.Web.UI.WebControls.WebParts;
 using System.Xml.Serialization;
@@ -12,8 +13,23 @@ using System.Xml.Serialization;
 namespace Screenovator
 {
 
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
+        private string formname = "Screenovator";
+
+        public Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
+
+        private string extension = ".scrxml";
+
+        //string path_exe = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);    // cesta k .exe
+        string path_initial = Directory.GetCurrentDirectory();
+
+        private const string str_panel_scene = "panel_scene";
+        private const string str_label_sceneorder = "label_sceneorder";
+        private const string str_label_scenename = "label_scenename";
+        private const string str_label_sceneheading = "label_sceneheading";
+        private const string str_label_scenelength = "label_scenelength";
+
         // pozice okrajů jednotlivých typů odstavců
         public const int tab_speechstart = 10;
         public const int tab_character = 20;
@@ -36,33 +52,96 @@ namespace Screenovator
         Scene currentscene = null;             // pointer na aktuálě vybranou scénu v objektu screenplay
         Panel currentscenepanel = null;        // pointer na aktuálně vybraný panel
 
-        //List<Panel> panellist = new List<Panel>();
+        Configuration conf;
 
         // print hack
         private Font printFont;
         private StreamReader streamToPrint;
 
 
-        public Form1()
+        public FormMain()
         {
             InitializeComponent();
 
             // přidáme do hlavičky okna číslo verze
-            Version version = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-            Text += " " + version.Major + "." + version.Minor;
+            formname += " " + version.Major + "." + version.Minor;
+            Text = formname;
 
-            // zatím začínáme natvrdo načtením souboru
-            screenplay.filename = "pokus";
-            LoadScreenplay(screenplay.filename + ".xml");
+            // config
+            conf = Configuration.LoadXMLConfig();
 
-            // natáhneme flowpanely
-            ResizeScenesFlowPanel();
+            // custom barvy
+            const int custmax = 255;
+            const int custmid = 240;
+            const int custmin = 216;
+            const int custtwo = 224;
+            colorDialog.CustomColors = new int[] {
+                                        ColorTranslator.ToOle(Color.FromArgb(custmax, custtwo, custtwo)),
+                                        ColorTranslator.ToOle(Color.FromArgb(custtwo, custmax, custtwo)),
+                                        ColorTranslator.ToOle(Color.FromArgb(custtwo, custtwo, custmax)),
 
-            // sjednotíme šířku panelů scén ve jejich flowpanelu
-            ResizeAllScenePanels();
+                                        ColorTranslator.ToOle(Color.FromArgb(custmax, custmid, custmin)),
+                                        ColorTranslator.ToOle(Color.FromArgb(custmid, custmin, custmax)),
+                                        ColorTranslator.ToOle(Color.FromArgb(custmin, custmax, custmid)),
+
+                                        ColorTranslator.ToOle(Color.FromArgb(custmax,custmin,custmid)),
+                                        ColorTranslator.ToOle(Color.FromArgb(custmin,custmid,custmax)),
+                                        ColorTranslator.ToOle(Color.FromArgb(custmid,custmax,custmin))
+                                      };
+
+
+            // nastavíme okno
+            //this.SuspendLayout();
+            this.WindowState = conf.windowstate;
+            //this.Location = conf.location;      // tohle nějak nefunguje - zřejmě to něco to až po dokončení inicializace přepíše
+            //this.ResumeLayout();
+
+            //flowLayoutPanel_scenes_list.Height = splitContainer_scenes.Panel1.ClientSize.Height - flowLayoutPanel_scenes_options.Height - 6;
+
+            // nastavení panelu se scénami
+            checkBox_showname.Checked = conf.displayname;
+            checkBox_showheading.Checked = conf.displayheading;
+            comboBox_panelheight.SelectedIndex = conf.heighttype;
+
+            // zkusíme načíst poslední soubor
+            if (conf.reopenlatestfile)
+            {
+                // zatím začínáme natvrdo načtením souboru
+                screenplay.filename = conf.latestfilename;
+                LoadScreenplay(screenplay.filename + extension);
+            }
+
+            // pokud nemáme ani jednu scénu, tak zřejmě neprošlo žádné načtení (pokud soubor nebyl zmršený)
+            if (screenplay.scenelist.Count == 0)
+            {
+                screenplay.filename = "untitled";
+                AddNewScene();
+            }
+
+            // zkusíme vyvolat přepočet velikostí flow panelů
+            flowLayoutPanel_scenes_list.Height = splitContainer_scenes.Panel1.ClientSize.Height - flowLayoutPanel_scenes_options.Height - 6;
 
             // aktualizujeme zobrazovací výšku panelů
+            UpdateVisibilityAllNames();
+            UpdateVisibilityAllHeadings();
             UpdateAllPanelHeights();
+
+            // pokud je okno v normálním stavu, tak provedeme nějaké manévry
+            if (WindowState == FormWindowState.Normal)
+            {
+                // pozice a velikost okna
+                this.StartPosition = FormStartPosition.Manual;
+                this.Location = conf.location;
+                if (conf.size.Width > 100 && conf.size.Height > 100)
+                    this.Size = conf.size;
+
+                // velikost splitteru
+                if (conf.splitterdistance >= 150)
+                {
+                    splitContainer_scenes.SplitterDistance = conf.splitterdistance;
+                    conf.splitterdistance = 0;
+                }
+            }
 
             SelectScene(0);
         }
@@ -78,8 +157,9 @@ namespace Screenovator
             newpanel.BackColor = newscene.color;
             newpanel.Location = new System.Drawing.Point(3, 90);
             newpanel.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
-            newpanel.Name = "panel_scene" + newscene.order;
-            newpanel.Size = new System.Drawing.Size(220, 39);
+            newpanel.Name = str_panel_scene + newscene.order;
+            // není to úplně perfektní (při startu je tam rozdíl pár pixelů), ale je to únosné
+            newpanel.Size = new System.Drawing.Size(splitContainer_scenes.Panel1.Width - 20, 39);
             newpanel.TabIndex = 4;
             newpanel.DragDrop += new System.Windows.Forms.DragEventHandler(panel_scene_DragDrop);
             newpanel.DragEnter += new System.Windows.Forms.DragEventHandler(panel_scene_DragEnter);
@@ -88,7 +168,7 @@ namespace Screenovator
             // label_sceneorder
             Label sceneorder = new Label();
             sceneorder.Location = new System.Drawing.Point(3, 3);
-            sceneorder.Name = "label_sceneorder" + newscene.order;
+            sceneorder.Name = str_label_sceneorder + newscene.order;
             sceneorder.Size = new System.Drawing.Size(25, 14);
             sceneorder.Text = newscene.order.ToString();
             sceneorder.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -100,11 +180,12 @@ namespace Screenovator
             Label scenename = new Label();
             scenename.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             scenename.BackColor = System.Drawing.Color.FromArgb(192, 255, 255, 255);
-            scenename.Location = new System.Drawing.Point(30, 3);
-            scenename.Margin = new Padding(3);
-            scenename.MinimumSize = new System.Drawing.Size(20, 13);
-            scenename.Name = "label_scenename" + newscene.order;
-            scenename.Size = new System.Drawing.Size(newpanel.Width - 60, 13);
+            scenename.Location = new System.Drawing.Point(30, 0);
+            scenename.Padding = new Padding(3, 1, 3, 3);
+            scenename.TextAlign = ContentAlignment.MiddleLeft;
+            scenename.MinimumSize = new System.Drawing.Size(20, 20);
+            scenename.Name = str_label_scenename + newscene.order;
+            scenename.Size = new System.Drawing.Size(newpanel.Width - 60, 20);
             scenename.Text = newscene.name;
             scenename.MouseDown += new System.Windows.Forms.MouseEventHandler(label_parentscene_MouseDown);
             newpanel.Controls.Add(scenename);
@@ -114,9 +195,9 @@ namespace Screenovator
             sceneheading.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
             //sceneheading.BackColor = System.Drawing.Color.FromArgb(192, 255, 255, 255);
             sceneheading.Location = new System.Drawing.Point(30, 23);
-            sceneheading.Margin = new Padding(3);
+            sceneheading.Padding = new Padding(3, 0, 3, 0);
             sceneheading.MinimumSize = new System.Drawing.Size(20, 13);
-            sceneheading.Name = "label_sceneheading" + newscene.order;
+            sceneheading.Name = str_label_sceneheading + newscene.order;
             sceneheading.Size = new System.Drawing.Size(newpanel.Width - 60, 13);
             sceneheading.Text = newscene.heading;
             sceneheading.MouseDown += new System.Windows.Forms.MouseEventHandler(label_parentscene_MouseDown);
@@ -126,7 +207,7 @@ namespace Screenovator
             Label scenelength = new Label();
             scenelength.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Right);
             scenelength.Location = new System.Drawing.Point(newpanel.Width - 26, 3);
-            scenename.Name = "label_scenelength" + newscene.order;
+            scenename.Name = str_label_scenelength + newscene.order;
             scenelength.Size = new System.Drawing.Size(36, 13);
             scenelength.Text = newscene.length.ToString();
             scenelength.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -157,7 +238,7 @@ namespace Screenovator
         {
             // přidání scény do seznamu
             Scene newscene = new Scene();
-            newscene.name = "Nová scéna";
+            newscene.name = "A new scene";
             newscene.order = screenplay.scenelist.Count + 1;
             screenplay.scenelist.Add(newscene);
 
@@ -165,13 +246,80 @@ namespace Screenovator
             AddPanelOfScene(newscene);
         }
 
+        void DeleteAllScenes()
+        {
+            foreach (Scene scene in screenplay.scenelist)
+            {
+                // zrušíme panel
+                scene.panelscene.Dispose();
+            }
+            // zrušíme celý seznam scén
+            screenplay.scenelist.Clear();
+
+            // jméno souboru a projektu
+            screenplay.docname = "Untitled";
+            screenplay.filename = "untitled";
+
+            // upravíme hlavičku okna
+            Text = formname + " - " + screenplay.filename;
+        }
+
         void DeleteScene(Scene scene)
         {
-            // smazání scény i jejího panelu
-            // Control.Dispose(Boolean)
-            // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.control.dispose?view=netframework-4.8
-            // Object.Finalize 
+            // pokud je scéna jen jedna, tak je třeba speciální přístup
+            if (screenplay.scenelist.Count <= 1)
+            {
+                DeleteAllScenes();
+                AddNewScene();
+                SelectScene(0);
+            }
+            else
+            {
+                // smazání scény i jejího panelu
+                // Control.Dispose(Boolean)
+                // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.control.dispose?view=netframework-4.8
+                // Object.Finalize
 
+                int id = scene.order - 2;
+
+                // zrušíme panel
+                scene.panelscene.Dispose();
+
+                // zrušíme scénu ze seznamu
+                screenplay.scenelist.Remove(scene);
+
+                // přečíslujeme scény
+                UpdateOrdering();
+
+                // nastavíme novou aktivní scénu
+                if (id < 0)
+                    id = 0;
+                SelectScene(id); // scene
+
+            }
+        }
+
+        void UpdateOrdering()
+        {
+            // přanastaví číslování scén a panelů po nějaké změně (třeba po smazání scény)
+            for (int i = 0; i < screenplay.scenelist.Count; i++)
+            {
+                int id = i + 1;
+                // číslo scény
+                screenplay.scenelist[i].order = id;
+
+                // jména ovládacích prvků
+                // ovšem pokud se volá při loadu, tak ještě nejsou nastavené pointery na panel a není možné do toho vrtat
+                if (screenplay.scenelist[i].panelscene != null)
+                {
+                    screenplay.scenelist[i].panelscene.Name = str_panel_scene + id;
+                    screenplay.scenelist[i].labelorder.Name = str_label_sceneorder + id;
+                    screenplay.scenelist[i].labelorder.Text = id.ToString();
+                    screenplay.scenelist[i].labelscenename.Name = str_label_scenename + id;
+                    screenplay.scenelist[i].labelsceneheading.Name = str_label_sceneheading + id;
+                    screenplay.scenelist[i].labelscenelength.Name = str_label_scenelength + id;
+                }
+            }
         }
 
         void LoadScreenplay(string filename)
@@ -187,15 +335,20 @@ namespace Screenovator
                 screenplay.scenelist.Sort();
 
                 // a změnit čísla
-                for (int i = 0; i < screenplay.scenelist.Count; i++)
-                    screenplay.scenelist[i].order = i + 1;
-
+                UpdateOrdering();
 
                 // připojíme si k tomu panely
                 foreach (Scene scene in screenplay.scenelist)
                     AddPanelOfScene(scene);
-                //
+
+                // upravíme hlavičku okna
+                Text = formname + " - " + filename;
+
+                // hlášení na dolní liště
                 label_info.Text = "File loaded";
+
+                // pro jistotu reset příznaku neuložených změn
+                screenplay.unsaved = false;
             }
             catch (Exception exception)
             {
@@ -211,7 +364,15 @@ namespace Screenovator
                 var wfile = new System.IO.StreamWriter(filename);
                 writer.Serialize(wfile, screenplay);
                 wfile.Close();
+
+                // upravíme hlavičku okna
+                Text = formname + " - " + filename;
+
+                // hlášení na dolní liště
                 label_info.Text = "File saved";
+
+                // reset příznaku neuložených změn
+                screenplay.unsaved = false;
             }
             catch (Exception exception)
             {
@@ -221,15 +382,6 @@ namespace Screenovator
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && (e.KeyCode == Keys.S))
-            {
-                SaveScreenplay(screenplay.filename + ".xml");
-            }
-            else if (e.Control && (e.KeyCode == Keys.L))
-            {
-                LoadScreenplay(screenplay.filename + ".xml");
-            }
-
             if (e.KeyCode == Keys.Escape) // Tab
             {
                 //richTextBox.SuspendLayout();
@@ -306,6 +458,34 @@ namespace Screenovator
 
                 ColorAllText();
             }
+            else if (e.KeyCode == Keys.Down || e.KeyCode == Keys.PageDown)
+            {
+                // nesnažíme se náhodou scrollovat za okraj scény?
+                int currentline = richTextBox_scene.GetLineFromCharIndex(richTextBox_scene.SelectionStart);
+                int lastline = richTextBox_scene.GetLineFromCharIndex(richTextBox_scene.TextLength);
+                if (currentline >= lastline && currentscene.order < screenplay.scenelist.Count)
+                {
+                    // jo, takže zkusíme posun dál
+                    DeselectScene();
+                    SelectScene(currentscene.order);    // defacto +1
+                    richTextBox_scene.Focus();
+                    e.Handled = true;
+                }
+            }
+            else if (e.KeyCode == Keys.Up || e.KeyCode == Keys.PageUp)
+            {
+                // nesnažíme se náhodou scrollovat za okraj scény?
+                int currentline = richTextBox_scene.GetLineFromCharIndex(richTextBox_scene.SelectionStart);
+                if (currentline <= 0 && currentscene.order > 1)
+                {
+                    // jo, takže zkusíme posun dál
+                    DeselectScene();
+                    SelectScene(currentscene.order - 2);    // defacto -1
+                    richTextBox_scene.Focus();
+                    richTextBox_scene.SelectionStart = richTextBox_scene.TextLength;
+                    e.Handled = true;
+                }
+            }
 
         }
 
@@ -354,7 +534,7 @@ namespace Screenovator
 
                     richTextBox_scene.SelectionIndent = margin_character;
                     richTextBox_scene.SelectionRightIndent = margin_speechend;
-                    
+
                     // změníme na uppercase
                     //*** ideálně by to chtělo uložit si řádek v původní verzi, aby se k němu dalo vrátít
                     int pos = richTextBox_scene.SelectionStart;
@@ -383,18 +563,19 @@ namespace Screenovator
         private void button_color_Click(object sender, EventArgs e)
         {
             // Show the color dialog.
-            DialogResult result = colorDialog1.ShowDialog();
+            DialogResult result = colorDialog.ShowDialog();
+
             // See if user pressed ok.
             if (result == DialogResult.OK)
             {
                 // Set form background to the selected color.
-                panelHeader.BackColor = colorDialog1.Color;
+                panelHeader.BackColor = colorDialog.Color;
 
                 // nastavíme barvu u panelu
-                currentscenepanel.BackColor = colorDialog1.Color;
+                currentscenepanel.BackColor = colorDialog.Color;
 
                 // nastavíme barvu do seznamu
-                currentscene.color = colorDialog1.Color;
+                currentscene.color = colorDialog.Color;
             }
         }
 
@@ -563,7 +744,7 @@ namespace Screenovator
                 // deselect scény
                 DeselectScene();
                 // načteme scénu do pravého panelu
-                SelectScene(id, panel);
+                SelectScene(id); // panel
             }
         }
 
@@ -576,46 +757,6 @@ namespace Screenovator
             // výsledek je tedy zřejmě třeba řešit v rámci dragdrop end
             //base.OnMouseDown(e);
             DoDragDrop(sender, DragDropEffects.All);
-        }
-
-        private void panel_scene_DragOver(object sender, DragEventArgs e)
-        {
-            //base.OnDragOver(e);
-            // is another dragable
-            /*
-            if (e.Data.GetData(typeof(Panel)) != null)
-            {
-
-                Panel q = (Panel)e.Data.GetData(typeof(Panel));
-                Panel s = (sender as Panel);
-                label_info.Text = q.Name + s.Name;
-                // jsme na jiném objektu?
-                //if (q.Name != s.Name)
-                if (q != s)
-                {
-                    // p je podkladový flowpanel
-                    // sender?
-                    // e?
-                    FlowLayoutPanel p = (FlowLayoutPanel)(sender as Panel).Parent;
-                    //Current Position             
-                    int myIndex = p.Controls.GetChildIndex((sender as Panel));
-
-                    // Dragged to control to location of next picturebox
-                    string oldtext = q.GetChildAtPoint(new Point(5, 5)).Text;
-                    p.Controls.SetChildIndex(q, myIndex);
-                    q.GetChildAtPoint(new Point(5, 5)).Text = (myIndex + 1).ToString();
-
-                    // update number of replaced item
-                    s.GetChildAtPoint(new Point(5, 5)).Text = oldtext;
-
-                    // je dobrý nápad aktualizovat číslo scény v pravém okně, protože se mohlo změnit
-                    label_scenenumber.Text = currentscenepanel.GetChildAtPoint(new Point(5, 5)).Text = (myIndex + 1).ToString();
-
-                    //*** za nějaké situace se to číslování panelů rozpadne - souvisí to s přeblikáváním, když mají různou výšku?
-                }
-            }
-            */
-
         }
 
         private void panel_scene_DragEnter(object sender, DragEventArgs e)
@@ -639,8 +780,9 @@ namespace Screenovator
         }
 
 
-        private void flowLayoutPanel2_Resize(object sender, EventArgs e)
+        private void flowLayoutPanel_scenelist_Resize(object sender, EventArgs e)
         {
+            // pokud se změní rozměr panelu se scénami, tak stejně roztáhneme panely všech scén
             ResizeAllScenePanels();
         }
 
@@ -668,17 +810,17 @@ namespace Screenovator
             label_info.Text = "Scene deselected";
         }
 
-        private void SelectScene(int id, object sender = null)
+        //private void SelectScene(int id, object sender = null)
+        private void SelectScene(int id)
         {
-            Panel newselected = sender as Panel;
-
-            // pokud je odesilatel null, tak se jedná o inicializaci
-            /*
-            if (sender == null)
+            // kontrola proti pádu
+            if (id >= screenplay.scenelist.Count)
             {
-                newselected = panellist[0];
+                return;
             }
-            */
+
+            //Panel newselected = sender as Panel;
+            Panel newselected = screenplay.scenelist[id].panelscene;
 
             // zvýraznění panelů
             // zapneme nový
@@ -690,6 +832,9 @@ namespace Screenovator
             // změníne aktivní položky - je to třeba dělat před přepsáním hodnot panelů
             currentscene = screenplay.scenelist[id];
             currentscenepanel = newselected;
+
+            // tohle by mělo řešit falešné unsaved changes
+            currentscenepanel.Focus();
 
             // překreslíme pravý panel
             label_scenenumber.Text = currentscene.order.ToString();
@@ -714,9 +859,13 @@ namespace Screenovator
             if (checkBox_showname.Checked && checkBox_showheading.Checked)
                 minheight += 20;
 
-            if (checkBox_relativeheight.Checked)
+            if (comboBox_panelheight.SelectedIndex > 0)
             {
-                int newheight = scene.length / 5;
+                int koef = 5;
+                if (comboBox_panelheight.SelectedIndex == 1)
+                    koef = 10;
+
+                int newheight = scene.length / koef;
                 if (newheight < minheight)
                     newheight = minheight;
                 scene.panelscene.Height = newheight;
@@ -733,6 +882,8 @@ namespace Screenovator
 
         private void UpdateAllPanelHeights()
         {
+            // aktualizujeme výšku všech panelů podle nastavení checkboxů a délky scén
+
             // změna výšky panelů
             flowLayoutPanel_scenes_list.SuspendLayout();
 
@@ -787,25 +938,21 @@ namespace Screenovator
 
         private void splitContainer_Panel1_Resize(object sender, EventArgs e)
         {
-            ResizeScenesFlowPanel();
-
             // potřebuju vnutit výšku levého panelu přes skoro celé okno
             flowLayoutPanel_scenes_list.Height = splitContainer_scenes.Panel1.ClientSize.Height - flowLayoutPanel_scenes_options.Height - 6;
+
+            // flowLayoutPanel_scenes_main se korektně roztahuje sám
         }
 
         private void ResizeScenesFlowPanel()
         {
+            // rámeček se seznamem scén by se měl roztáhnout podle rozměru celého levého svislého flowpanelu
             flowLayoutPanel_scenes_list.Width = flowLayoutPanel_scenes_main.Width;
             flowLayoutPanel_scenes_options.Width = flowLayoutPanel_scenes_main.Width;
 
             // hack na vypnutí horizontálního scrollbaru
             // zajímavé je, že jinde to nefunguje - asi se to něčím přepisuje
             flowLayoutPanel_scenes_list.HorizontalScroll.Maximum = 50;
-        }
-
-        private void Form1_Resize(object sender, EventArgs e)
-        {
-            ResizeScenesFlowPanel();
         }
 
         private void textBox_scenename_TextChanged(object sender, EventArgs e)
@@ -818,6 +965,10 @@ namespace Screenovator
             {
                 currentscene.labelscenename.Text = textBox_scenename.Text;
             }
+
+            // neuložená změna
+            if (textBox_scenename.Focused)
+                screenplay.unsaved = true;
         }
 
         private void textBox_heading_TextChanged(object sender, EventArgs e)
@@ -827,6 +978,10 @@ namespace Screenovator
 
             // přepsání položky v kartičce
             //currentscenepanel.GetChildAtPoint(new Point(35, 5)).Text = textBox_scenename.Text;
+
+            // neuložená změna
+            if (textBox_heading.Focused)
+                screenplay.unsaved = true;
         }
 
         private void panel_scene_DragDrop(object sender, DragEventArgs e)
@@ -866,6 +1021,9 @@ namespace Screenovator
 
                     // sort the scenes in screenplay object
                     screenplay.scenelist.Sort();
+
+                    // přečíslujeme scény
+                    UpdateOrdering();
 
                     // update number of scene in right panel
                     label_scenenumber.Text = currentscene.order.ToString();
@@ -977,18 +1135,22 @@ namespace Screenovator
             currentscene.labelscenelength.Text = richTextBox_scene.Text.Length.ToString();
 
             // aktualizujeme velikost panelu "kartičky"
-            if (checkBox_relativeheight.Checked)
+            if (comboBox_panelheight.SelectedIndex > 0)
                 UpdatePanelHeight(currentscene);
 
             // pokud píšeme jméno postavy, tak poslední znak změníme na uppercase
             if (richTextBox_scene.SelectionIndent == margin_character)
             {
-                richTextBox_scene.SelectionStart--;
+                if (richTextBox_scene.SelectionStart > 0)
+                    richTextBox_scene.SelectionStart--;
                 richTextBox_scene.SelectionLength = 1;
                 richTextBox_scene.SelectedText = richTextBox_scene.SelectedText.ToUpper();
                 // pozice a selekece se automatricky vyresetují
             }
 
+            // neuložená změna
+            if (richTextBox_scene.Focused)
+                screenplay.unsaved = true;
         }
 
         private void richTextBox_scene_Leave(object sender, EventArgs e)
@@ -1001,7 +1163,7 @@ namespace Screenovator
             DeleteScene(currentscene);
         }
 
-        private void checkBox_showname_CheckedChanged(object sender, EventArgs e)
+        private void UpdateVisibilityAllNames()
         {
             foreach (Scene scene in screenplay.scenelist)
             {
@@ -1010,12 +1172,16 @@ namespace Screenovator
                 else
                     scene.labelscenename.Hide();
             }
+        }
 
+        private void checkBox_showname_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateVisibilityAllNames();
             UpdateAllPanelHeights();
 
         }
 
-        private void checkBox_showheading_CheckedChanged(object sender, EventArgs e)
+        private void UpdateVisibilityAllHeadings()
         {
             foreach (Scene scene in screenplay.scenelist)
             {
@@ -1024,8 +1190,183 @@ namespace Screenovator
                 else
                     scene.labelsceneheading.Hide();
             }
+        }
 
+        private void checkBox_showheading_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateVisibilityAllHeadings();
             UpdateAllPanelHeights();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // check for unsaved changes
+            if (screenplay.unsaved == true)
+            {
+                var res = MessageBox.Show(localization.UnsavedChangesQuestion, localization.UnsavedChangesCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+
+                // If the no button was pressed ...
+                if (res == DialogResult.No)
+                    // cancel the closure of the main form.
+                    return;
+            }
+
+            openFileDialog.InitialDirectory = path_initial;
+            //openFileDialog.CheckFileExists = true;
+            DialogResult result = openFileDialog.ShowDialog(this);
+            if (result == DialogResult.OK) // Test result.
+            {
+                DeleteAllScenes();
+                //LoadScreenplay("pokus" + extension);
+                LoadScreenplay(openFileDialog.FileName);
+                SelectScene(0);
+            }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // check for unsaved changes
+            if (screenplay.unsaved == true)
+            {
+                var result = MessageBox.Show(localization.UnsavedChangesQuestion, localization.UnsavedChangesCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+
+                // If the no button was pressed ...
+                if (result == DialogResult.No)
+                    // cancel the closure of the main form.
+                    return;
+            }
+
+            DeleteAllScenes();
+
+            AddNewScene();
+            SelectScene(0);
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // uložení do souboru
+            // je třeba zajistit, že se text z richtextboxu přenese do scénáře
+            DeselectScene();
+            //SelectScene(currentscene.order-1);
+            SaveScreenplay(screenplay.filename + extension);
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveFileDialog.InitialDirectory = path_initial;
+            DialogResult result = saveFileDialog.ShowDialog(this);
+            if (result == DialogResult.OK) // Test result.
+            {
+                // zpracujeme jméno souboru
+                string filename = saveFileDialog.FileName;
+                filename = filename.Substring(0, filename.IndexOf(extension));
+                screenplay.filename = filename;
+
+
+                // uložení do souboru
+                // je třeba zajistit, že se text z richtextboxu přenese do scénáře
+                DeselectScene();
+                //SelectScene(currentscene.order-1);
+                SaveScreenplay(screenplay.filename + extension);
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void flowLayoutPanel_scenes_main_Resize(object sender, EventArgs e)
+        {
+            ResizeScenesFlowPanel();
+        }
+
+        private void FormMain_Resize(object sender, EventArgs e)
+        {
+            if (conf.splitterdistance >= 150)   // minimální použitelná šířka
+            {
+                // sem bychom se měli dostat pouze v případě, že je při startu zapnuté maximized
+                //*** není to úplně stoprocentní řešení
+
+                // zdá se, že SplitterDistance pracuje s pozicí v rámci Normal okna
+                // Maximize to celé nějak rozhodí
+
+                // první problém je zřejmě MinimumSize vnořených panelů
+                splitContainer_scenes.Panel1MinSize = splitContainer_scenes.Panel1MinSize * 935 / Width;
+
+                // hlavní problém se nutnost přepočítat splitterdistance
+                splitContainer_scenes.SplitterDistance = conf.splitterdistance * 935 / Width;
+                conf.splitterdistance = 0;
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormAbout formabout = new FormAbout();
+            formabout.StartPosition = FormStartPosition.Manual;
+            formabout.Location = new Point(Location.X + Width / 3, Location.Y + Height / 4);
+            formabout.label_version.Text = "version " + version.Major + "." + version.Minor;
+            formabout.ShowDialog();
+        }
+
+        private void comboBox_panelheight_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateAllPanelHeights();
+        }
+    }
+
+    public class Configuration
+    {
+        public FormWindowState windowstate;
+        public Point location;
+        public Size size;
+        public int splitterdistance;
+        public bool displayname;
+        public bool displayheading;
+        public int heighttype;
+        public string latestfilename;
+        public bool reopenlatestfile;
+
+        Configuration()
+        {
+            windowstate = FormWindowState.Normal;
+            splitterdistance = -1;
+            latestfilename = "";
+            reopenlatestfile = false;
+            displayname = true;
+            displayheading = true;
+            heighttype = 0;
+        }
+
+        public void SaveXMLConfig()
+        {
+            try
+            {
+                var writer = new System.Xml.Serialization.XmlSerializer(typeof(Configuration));
+                var wfile = new System.IO.StreamWriter("configuration.xml");
+                writer.Serialize(wfile, this);
+                wfile.Close();
+            }
+            catch
+            {
+            }
+        }
+
+
+        public static Configuration LoadXMLConfig()
+        {
+            Configuration result = new Configuration();
+            try
+            {
+                System.Xml.Serialization.XmlSerializer reader = new System.Xml.Serialization.XmlSerializer(typeof(Configuration));
+                System.IO.StreamReader file = new System.IO.StreamReader("configuration.xml");
+                result = (Configuration)reader.Deserialize(file);
+                file.Close();
+            }
+            catch
+            {
+            }
+            return result;
         }
     }
 
@@ -1090,14 +1431,16 @@ namespace Screenovator
     {
 
         //public const int scenemax = 100;
-        public string docname;
-        public string filename;
+        public string docname;      // jméno scénáře
+        public string filename;     // krátké jméno souboru bez přípony
+        public bool unsaved;        // příznak, že existují neuložené změny
 
         [XmlArray(ElementName = "SceneList")]
         public List<Scene> scenelist = new List<Scene>();
 
         public Screenplay()
         {
+            unsaved = false;
         }
 
         public string GeneratePreview(RichTextBox rtb)
@@ -1107,10 +1450,10 @@ namespace Screenovator
             // titulní strana
             for (int k = 0; k < 10; k++)
                 result += Environment.NewLine;
-            result += Environment.NewLine + Form1.space_tab_character + docname + Environment.NewLine + Environment.NewLine;
+            result += Environment.NewLine + FormMain.space_tab_character + docname + Environment.NewLine + Environment.NewLine;
             for (int k = 0; k < 10; k++)
                 result += Environment.NewLine;
-            result += Form1.space_tab_character + "Vít Čondák" + Environment.NewLine;
+            result += FormMain.space_tab_character + "Vít Čondák" + Environment.NewLine;
             for (int k = 0; k < 10; k++)
                 result += Environment.NewLine;
 
@@ -1144,11 +1487,11 @@ namespace Screenovator
 
                     // zvětšení okraje pomocí mezer
                     // postava
-                    if (rtb.SelectionIndent >= Form1.margin_character)
-                        plaintext += Form1.space_tab_character;
+                    if (rtb.SelectionIndent >= FormMain.margin_character)
+                        plaintext += FormMain.space_tab_character;
                     // řeč
-                    else if (rtb.SelectionIndent >= Form1.margin_speechstart)
-                        plaintext += Form1.space_tab_speechstart;
+                    else if (rtb.SelectionIndent >= FormMain.margin_speechstart)
+                        plaintext += FormMain.space_tab_speechstart;
 
                     // hlavní text
                     //*** někde tady může docházet ke zdvojování CR LF - nebo spíš jenom jednoho z nich
